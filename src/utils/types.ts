@@ -13,6 +13,11 @@ export type PerfumesType = {
     price: number;
     description: string;
     image: string;
-    category: null | string;
+    categories: [number];
     brand: null | string;
+}
+
+export type CategoriesType = {
+    id: number;
+    name: string;
 }

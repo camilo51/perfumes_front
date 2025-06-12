@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Designer } from "@/app/layout";
 import { useDropzone } from "react-dropzone";
 import axios, { isAxiosError } from "axios";
 import { toast } from "sonner";
+import { CategoriesType } from "@/src/utils/types";
+import Select from "react-select";
 
 export default function Create() {
 
@@ -17,42 +19,70 @@ export default function Create() {
     description: "",
     image: "",
     stock: 0,
-    category: "",
+    categories: [0],
     brand: "", 
   }
-
-  const [perfume, setPerfume] = useState(defaultValues);
   
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: {
-        'image/*': ['.jpg', '.png']
-    },
-    onDrop: (acceptedFiles) => {
-        const file = acceptedFiles[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPerfume({ ...perfume, image: reader.result as string });
-            };
-            reader.readAsDataURL(file);
-        }
-    },
-  });
+  const [perfume, setPerfume] = useState(defaultValues);
+  const [categories, setCategories] = useState<CategoriesType[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    try {
-        const {data} = await axios.post(`${process.env.NEXT_PUBLIC_URL_BACKEND}/perfumes/create`, perfume)
-        toast.success(data.message);
-        router.push('/admin/perfumes');
-    } catch (error) {
-        if (isAxiosError(error)) {
-            console.log(error.response?.data.message || "Error al crear el perfume");
+  
+  useEffect(() => {
+      const getCategories = async () => {
+          try {
+              const {data} = await axios.get(`${process.env.NEXT_PUBLIC_URL_BACKEND}/categories`);
+            setCategories(data);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                console.log(error.message);
+            }
         }
+    } 
+    getCategories();
+}, [])
+
+    const options = categories.map((category: {id: number, name: string}) => ({
+        value: category.id,
+        label: category.name
+    }))
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        accept: {
+            'image/*': ['.jpg', '.png']
+        },
+        onDrop: (acceptedFiles) => {
+            const file = acceptedFiles[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPerfume({ ...perfume, image: reader.result as string });
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+    });
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        
+        try {
+            const {data} = await axios.post(`${process.env.NEXT_PUBLIC_URL_BACKEND}/perfumes/create`, perfume)
+            toast.success(data.message);
+            router.push('/admin/perfumes');
+        } catch (error) {
+            if (isAxiosError(error)) {
+                console.log(error.response?.data.message || "Error al crear el perfume");
+            }
+        }
+
     }
 
-  }
+    const changeCategory = (selected: any) => {
+        const ids = selected ? selected.map((option: {value: number}) => option.value) : [];
+        setPerfume(prev => ({
+            ...prev,
+            categories: ids
+        }))
+    }
 
   return (
     <>
@@ -135,15 +165,13 @@ export default function Create() {
                     />
                 </div>
                 <div className="flex flex-col gap-1 mb-3">
-                    <label htmlFor="category" className="text-sm">Categoría</label>
-                    <input 
-                        type="text" 
-                        id="category" 
-                        name="category"
-                        className="bg-white p-2 rounded shadow-sm placeholder:text-gray-300"
-                        value={perfume.category}
-                        onChange={(e) => setPerfume({...perfume, category: e.target.value})}
-                        placeholder="Categoría del perfume"
+                    <label htmlFor="categories" className="text-sm">Categorías</label>
+                    <Select 
+                        isMulti
+                        options={options}
+                        value={options.filter(option => perfume.categories.includes(option.value))}
+                        onChange={changeCategory}
+                        placeholder="Seleccione las categorias del perfume"
                     />
                 </div>
                 <div className="flex flex-col gap-1 mb-3">
