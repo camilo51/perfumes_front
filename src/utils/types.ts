@@ -7,17 +7,26 @@ export type UserType = {
     role: number;
 }
 
+
+
 export type PerfumesType = {
-    id: number;
+    id?: number;
     name: string;
     price: number;
     description: string;
     image: string;
-    categories: [number];
-    brand: null | string;
+    stock: number;
+    categories: number[];
+    aromas: number[];
+    brand: number;
 }
 
 export type CategoriesType = {
-    id: number;
+    id?: number;
     name: string;
 }
+
+export type AromasType = Pick<CategoriesType, "id" | "name"> & {
+    price: number;
+};
+export type BrandsType = Pick<CategoriesType, "id" | "name">;

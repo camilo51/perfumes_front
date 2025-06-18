@@ -29,6 +29,7 @@ export default function HeaderComponent() {
     }
     const handleLogOut = () => {
         localStorage.removeItem("USER");
+        setUser(undefined);
         setAuthMenu(!authMenu);
         router.push("/auth/login");
     }

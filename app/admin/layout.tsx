@@ -18,6 +18,7 @@ export default function AdminLayout({children}: Readonly<{children: React.ReactN
                 <Link href={"/admin/dashboard"} className="hover:bg-blue-200 p-2 rounded-lg text-sm">Dashboard</Link>
                 <Link href={"/admin/perfumes"} className="hover:bg-blue-200 p-2 rounded-lg text-sm">Perfumes</Link>
                 <Link href={"/admin/categories"} className="hover:bg-blue-200 p-2 rounded-lg text-sm">Categorías</Link>
+                <Link href={"/admin/aromas"} className="hover:bg-blue-200 p-2 rounded-lg text-sm">Aromas</Link>
                 <Link href={"/admin/brands"} className="hover:bg-blue-200 p-2 rounded-lg text-sm">Marcas</Link>
                 <Link href={"/admin/orders"} className="hover:bg-blue-200 p-2 rounded-lg text-sm">Pedidos</Link>
             </nav>

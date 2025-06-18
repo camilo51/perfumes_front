@@ -8,53 +8,62 @@ import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from "@tanstack
 import { Designer } from "@/app/layout";
 import { PerfumesType } from "@/src/utils/types";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { usePerfumesStore } from "@/src/store/usePerfumesStore";
 
-export default function Main() {
+interface MainInterface {
+    data: PerfumesType[];
+}
 
-    const [perfumes, setPerfumes] = useState<PerfumesType[]>([]);
+export default function Main({data}: MainInterface) {
+
+    const {perfumes, setPerfumes} = usePerfumesStore();
 
     useEffect(() => {
-        const getPerfumes = async () => {
-            try {
-                const {data} = await axios.get(`${process.env.NEXT_PUBLIC_URL_BACKEND}/perfumes`);
-                setPerfumes(data);
-            } catch (error) {
-                if (isAxiosError(error)) {
-                    toast.error(error.message)
-                }
-            }
-        }
-        getPerfumes();
+        setPerfumes(data);
     }, []);
 
-    const PerfumesColumns = [
-    {
-        accessorKey: 'image', 
-        header: 'Imagen',
-        cell: ({row}: {row: any}) => (
-            <div className="rounded overflow-hidden">
-                <img 
-                    src={row.original.image}
-                    alt={row.original.name}
-                    className="max-w-40 p-2"
-                /> 
-            </div>
-        )
-    },
-    {accessorKey: 'name', header: 'Nombre del perfume'},
-    {accessorKey: 'price', header: 'Precio($)'},
-    {accessorKey: 'stock', header: 'Cantidad'},
-    {
-        id: 'actions',
-        header: "Acciones",
-        cell: ({row}: {row: any}) => (
-            <div className="flex items-center gap-2">
-                <Link className="p-2 bg-blue-500 rounded border-none hover:cursor-pointer hover:bg-blue-400 transition-colors duration-200 inline-block" href={`/admin/perfumes/edit/${row.original.id}`}><PencilIcon className="w-6 aspect-square" /></Link> 
-                <button className="p-2 bg-red-500 rounded border-none hover:cursor-pointer hover:bg-red-400 transition-colors duration-200"><TrashIcon className="w-6 aspect-square" /></button>
-            </div>
-        )
+    const deletePerfume = async (id: number) => {
+        try {
+            const dataDelete = await axios.delete(`${process.env.NEXT_PUBLIC_URL_BACKEND}/perfumes/${id}`)
+            toast.success(dataDelete.data.message);
+            setPerfumes(perfumes.filter(perfume => perfume.id !== id));
+        } catch (error) {
+            if (isAxiosError(error)) {
+                console.log(error.message);
+            }
+        }
     }
-]
+
+    const PerfumesColumns = [
+        {
+            accessorKey: 'image', 
+            header: 'Imagen',
+            cell: ({row}: {row: any}) => (
+                <div className="rounded overflow-hidden">
+                    <img 
+                        src={row.original.image}
+                        alt={row.original.name}
+                        className="max-w-40 p-2"
+                    /> 
+                </div>
+            )
+        },
+        {accessorKey: 'name', header: 'Nombre del perfume'},
+        {accessorKey: 'price', header: 'Precio(COP)'},
+        {accessorKey: 'stock', header: 'Cantidad'},
+        {
+            id: 'actions',
+            header: "Acciones",
+            cell: ({row}: {row: any}) => (
+                <div className="flex items-center gap-2">
+                    <Link className="p-2 bg-blue-500 rounded border-none hover:cursor-pointer hover:bg-blue-400 transition-colors duration-200 inline-block" href={`/admin/perfumes/edit/${row.original.id}`}><PencilIcon className="w-6 aspect-square" /></Link> 
+                    <button className="p-2 bg-red-500 rounded border-none hover:cursor-pointer hover:bg-red-400 transition-colors duration-200" onClick={() => deletePerfume(row.original.id)}><TrashIcon className="w-6 aspect-square" /></button>
+                </div>
+            )
+        }
+    ]
+
+
 
     const table = useReactTable({
         data: perfumes,

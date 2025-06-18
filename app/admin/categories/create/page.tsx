@@ -1,5 +1,10 @@
-import Create from "@/src/layouts/admin/categories/create";
+import Form from "@/src/layouts/admin/categories/form";
 
 export default function page() {
-  return <Create />
+
+  const data = {
+    name: ""
+  }
+
+  return <Form data={data} />
 }
