@@ -1,24 +1,18 @@
-import Form from "@/src/layouts/admin/perfumes/form";
+import Main from "@/src/layouts/public/perfumes/main";
 import { AromasType, BrandsType, CategoriesType, PerfumesType } from "@/src/utils/types";
 import axios from "axios";
 import { Metadata } from "next";
 
-type Props = {
-    params: Promise<{ id: string; }>
-}
-
 export const metadata: Metadata = {
-    title: "Editar Perfume"
+    title: "Perfumes"
 }
 
-export default async function Page({params}: Props) {
-    const {id} = await params;
+export default async function Page() {
 
     const {data: categories}: { data: CategoriesType[] } = await axios.get(`${process.env.NEXT_PUBLIC_URL_BACKEND}/categories`);
     const {data: aromas}: { data: AromasType[] } = await axios.get(`${process.env.NEXT_PUBLIC_URL_BACKEND}/aromas`);
     const {data: brands}: { data: BrandsType[] } = await axios.get(`${process.env.NEXT_PUBLIC_URL_BACKEND}/brands`)
+    const { data }: {data: PerfumesType[]} = await axios.get(`${process.env.NEXT_PUBLIC_URL_BACKEND}/perfumes`);
 
-    const {data}: {data: PerfumesType} = await axios.get(`${process.env.NEXT_PUBLIC_URL_BACKEND}/perfumes/${id}`); 
-
-    return <Form categories={categories} aromas={aromas} brands={brands} data={data} isEdit={true} id={+id} />
+    return <Main data={data} categories={categories} aromas={aromas} brands={brands} />
 }

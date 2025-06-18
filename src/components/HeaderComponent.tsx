@@ -1,11 +1,11 @@
 "use client"
 
 import { Designer } from "@/app/layout";
-import { HeartIcon, ShoppingCartIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon, UserIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
-import { UserType } from "../utils/types";
+import { PerfumesType, UserType } from "../utils/types";
 import { useRouter } from "next/navigation";
 
 export default function HeaderComponent() {
@@ -14,9 +14,11 @@ export default function HeaderComponent() {
 
     const [authMenu, setAuthMenu] = useState(false)
     const [user, setUser] = useState<UserType>();
+    const [cart, setCart] = useState<PerfumesType[]>([]);
 
     useEffect(() => {
         const userData = localStorage.getItem("USER");
+        setCart(JSON.parse(localStorage.getItem("cart") || "[]"))
         if (userData) {
             setUser(JSON.parse(userData));
         } else {
@@ -36,15 +38,15 @@ export default function HeaderComponent() {
 
     return (
         <>
-            <Toaster expand={true} position="top-right" richColors closeButton duration={4000} />
             <header className="py-5 bg-columbia-blue">
+                <Toaster expand={true} position="top-right" richColors closeButton duration={4000} />
                 <div className="grid grid-cols-3 w-11/12 mx-auto">
                     <h1 className={`${Designer.className} text-4xl justify-self-start`}>Perfumes</h1>
                     <nav className="flex items-center justify-center justify-self-center">
                         <div className="flex items-center py-1 gap-2">
                             <Link href={"/"} className="font-bold rounded p-2 transition-colors duration-150">Inicio</Link>
                             <Link href={"/perfumes"} className="font-bold rounded p-2 transition-colors duration-150">Perfumes</Link>
-                            <Link href={"/personaliza"} className="font-bold rounded p-2 transition-colors duration-150">Personaliza</Link>
+                            <Link href={"/customize"} className="font-bold rounded p-2 transition-colors duration-150">Personaliza</Link>
                         </div>
                     </nav>
                     <div className="flex items-center gap-5 justify-self-end">
@@ -67,8 +69,10 @@ export default function HeaderComponent() {
                             </div>
                             )}
                         </div>
-                        <HeartIcon className="w-7 aspect-square" />
-                        <ShoppingCartIcon className="w-7 aspect-square" />
+                        <div className="relative">
+                            <p className="absolute -top-2 -right-1 bg-white rounded-full w-5 h-5 text-sm flex justify-center items-center">{cart.length > 0 ? cart.length : 0}</p>
+                            <ShoppingCartIcon className="w-7 aspect-square" />
+                        </div>
                     </div>
                 </div>
             </header>

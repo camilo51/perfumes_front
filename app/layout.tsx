@@ -17,10 +17,14 @@ export const Roboto = RobotoFont({
 export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
   return (
     <html lang="en">
-      <body className={`${Roboto.className} bg-white-smoke`}>
+      <body className={`${Roboto.className} bg-white-smoke grid min-h-[100dvh] grid-rows-[auto_1fr_auto]`}>
         <HeaderComponent />
 
         {children}
+
+        <footer className="bg-columbia-blue py-5 text-center">
+          <p>Todos los derechos reservados &copy;</p>
+        </footer>
       </body>
     </html>
   );

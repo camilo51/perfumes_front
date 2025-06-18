@@ -30,3 +30,10 @@ export type AromasType = Pick<CategoriesType, "id" | "name"> & {
     price: number;
 };
 export type BrandsType = Pick<CategoriesType, "id" | "name">;
+
+export type FiltersPerfumesType = {
+    price: string;
+    categories: number[];
+    aromas: number[];
+    brand: number | undefined; 
+}

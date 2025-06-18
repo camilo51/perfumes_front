@@ -1,9 +1,14 @@
 import Form from "@/src/layouts/admin/brands/form";
 import { BrandsType } from "@/src/utils/types";
 import axios from "axios";
+import { Metadata } from "next";
 
 type Props = {
     params: Promise<{id: string}>
+}
+
+export const metadata: Metadata = {
+    title: "Editar Marca"
 }
 
 export default async function Page({params}: Props) {

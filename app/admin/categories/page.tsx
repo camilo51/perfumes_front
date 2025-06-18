@@ -1,6 +1,11 @@
 import Main from "@/src/layouts/admin/categories/main";
 import { CategoriesType } from "@/src/utils/types";
 import axios from "axios";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Categorias"
+}
 
 export default async function page() {
 

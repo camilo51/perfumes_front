@@ -1,6 +1,11 @@
 import axios from "axios";
 import { AromasType, BrandsType, CategoriesType } from "@/src/utils/types";
 import Form from "@/src/layouts/admin/perfumes/form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Crear Perfume"
+}
 
 export default async function page() {
 
